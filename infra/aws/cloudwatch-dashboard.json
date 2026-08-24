@@ -1,0 +1,31 @@
+{
+  "start": "-P7D",
+  "widgets": [
+    {
+      "type": "log",
+      "x": 0,
+      "y": 0,
+      "width": 24,
+      "height": 8,
+      "properties": {
+        "query": "SOURCE '/aws/lambda/flutter-silver' | fields @timestamp, ingest_date, Entity, RowsIngested, RowCount, RowsQuarantined, ChecksTotal, DuplicateKeys, BlankValues, FormatViolations, OutOfRangeNumerics, FutureDatedRecords, ProcessingDurationMs\n| filter ispresent(Entity)\n| sort @timestamp desc\n| limit 30",
+        "region": "us-east-2",
+        "title": "Per entity — ingested, written to silver, quarantined",
+        "view": "table"
+      }
+    },
+    {
+      "type": "log",
+      "x": 0,
+      "y": 8,
+      "width": 24,
+      "height": 8,
+      "properties": {
+        "query": "SOURCE '/aws/lambda/flutter-silver' | fields @timestamp, entity, column, check, severity, failed_records, failed_ratio, passed, details\n| filter dq_check = 1\n| sort @timestamp desc, failed_records desc\n| limit 30",
+        "region": "us-east-2",
+        "title": "Imperfections by column — passed=0 means the contract tolerance was exceeded",
+        "view": "table"
+      }
+    }
+  ]
+}

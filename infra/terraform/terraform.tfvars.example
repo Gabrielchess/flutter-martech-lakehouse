@@ -1,0 +1,14 @@
+region      = "us-east-2"
+bucket_name = "flutter-martech-lakehouse"
+environment = "dev"
+
+# Deixe false enquanto testa para o pipeline nao disparar sozinho.
+schedule_enabled = false
+
+# Sem canal de alerta os alarmes ficam mudos. Preencha quando houver um.
+# alarm_actions = ["arn:aws:sns:us-east-2:000000000000:meu-topico"]
+alarm_actions = []
+
+# Confira a versao da layer na sua regiao:
+# aws lambda list-layer-versions --layer-name AWSSDKPandas-Python313 --region us-east-2
+pandas_layer_arn = "arn:aws:lambda:us-east-2:336392948345:layer:AWSSDKPandas-Python313:1"

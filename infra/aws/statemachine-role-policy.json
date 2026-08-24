@@ -1,0 +1,21 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "InvocarLambdasDoPipeline",
+            "Effect": "Allow",
+            "Action": "lambda:InvokeFunction",
+            "Resource": [
+                "arn:aws:lambda:us-east-2:026955879339:function:flutter-fx",
+                "arn:aws:lambda:us-east-2:026955879339:function:flutter-silver",
+                "arn:aws:lambda:us-east-2:026955879339:function:flutter-gold"
+            ]
+        },
+        {
+            "Sid": "NotificarFalha",
+            "Effect": "Allow",
+            "Action": "sns:Publish",
+            "Resource": "<SNS_TOPIC_ARN>"
+        }
+    ]
+}

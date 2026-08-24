@@ -1,0 +1,95 @@
+{
+  "Comment": "Pipeline Martech Flutter Brazil. Cada lambda e nomeada pela camada que PRODUZ: fx->reference, silver->silver, gold->gold. Sequencial porque cada uma le a saida da anterior.",
+  "StartAt": "Cambio",
+  "TimeoutSeconds": 1800,
+  "States": {
+    "Cambio": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "${fx_arn}",
+        "Payload.$": "$"
+      },
+      "ResultPath": "$.cambio",
+      "ResultSelector": {
+        "rows.$": "$.Payload.rows",
+        "degraded.$": "$.Payload.degraded_mode",
+        "dq.$": "$.Payload.dq"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 5,
+          "MaxAttempts": 3,
+          "BackoffRate": 2,
+          "Comment": "So falha transitoria de infra. Reprovacao de DQ NAO e retentada: repetir dado ruim gasta dinheiro para falhar igual."
+        }
+      ],
+      "Next": "Silver",
+      "Comment": "Roda primeiro: a silver le reference/fx_rates/current para converter os valores."
+    },
+    "Silver": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "${silver_arn}",
+        "Payload.$": "$"
+      },
+      "ResultPath": "$.silver",
+      "ResultSelector": {
+        "ok.$": "$.Payload.ok",
+        "failed.$": "$.Payload.failed",
+        "dq.$": "$.Payload.dq"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 5,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ],
+      "Next": "Gold",
+      "Comment": "bronze/ -> silver/. Valida, deduplica, quarentena, tipa, converte para BRL e parseia a taxonomia."
+    },
+    "Gold": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "${gold_arn}",
+        "Payload.$": "$"
+      },
+      "ResultPath": "$.gold",
+      "ResultSelector": {
+        "tables.$": "$.Payload.tables",
+        "written.$": "$.Payload.written",
+        "dq.$": "$.Payload.dq"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 5,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ],
+      "End": true,
+      "Comment": "silver/ -> gold/ (star schema: 3 dimensoes + 3 fatos). Agregado por jogador vive em vw_player_360, nao materializado."
+    }
+  }
+}

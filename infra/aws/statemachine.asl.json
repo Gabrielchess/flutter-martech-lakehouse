@@ -1,0 +1,101 @@
+{
+  "Comment": "Pipeline Martech Flutter Brazil. Cada lambda e nomeada pela camada que PRODUZ: fx->reference, silver->silver, gold->gold. Sequencial porque cada uma le a saida da anterior.",
+  "StartAt": "Cambio",
+  "TimeoutSeconds": 900,
+  "States": {
+    "Cambio": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "arn:aws:lambda:us-east-2:026955879339:function:flutter-fx",
+        "Payload.$": "$"
+      },
+      "ResultPath": "$.cambio",
+      "ResultSelector": {
+        "rows.$": "$.Payload.rows",
+        "degraded.$": "$.Payload.degraded_mode",
+        "dq.$": "$.Payload.dq"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 5,
+          "MaxAttempts": 3,
+          "BackoffRate": 2,
+          "Comment": "So falha transitoria de infra. Reprovacao de DQ NAO e retentada: repetir dado ruim so gasta dinheiro para falhar igual."
+        }
+      ],
+      "Next": "Silver",
+      "Comment": "Roda primeiro: a silver le reference/fx_rates/current para converter os valores."
+    },
+    "Silver": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "arn:aws:lambda:us-east-2:026955879339:function:flutter-silver",
+        "Payload": {
+          "ingest_date.$": "$.ingest_date"
+        }
+      },
+      "ResultPath": "$.silver",
+      "ResultSelector": {
+        "ok.$": "$.Payload.ok",
+        "failed.$": "$.Payload.failed",
+        "dq.$": "$.Payload.dq"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 5,
+          "MaxAttempts": 3,
+          "BackoffRate": 2,
+          "Comment": "So falha transitoria de infra. Reprovacao de DQ NAO e retentada: repetir dado ruim so gasta dinheiro para falhar igual."
+        }
+      ],
+      "Next": "Gold",
+      "Comment": "bronze/ -> silver/. Valida, deduplica, quarentena, tipa, converte para BRL e parseia a taxonomia."
+    },
+    "Gold": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "arn:aws:lambda:us-east-2:026955879339:function:flutter-gold",
+        "Payload": {
+          "reference_date.$": "$.reference_date"
+        }
+      },
+      "ResultPath": "$.gold",
+      "ResultSelector": {
+        "tables.$": "$.Payload.tables",
+        "written.$": "$.Payload.written",
+        "dq.$": "$.Payload.dq"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 5,
+          "MaxAttempts": 3,
+          "BackoffRate": 2,
+          "Comment": "So falha transitoria de infra. Reprovacao de DQ NAO e retentada: repetir dado ruim so gasta dinheiro para falhar igual."
+        }
+      ],
+      "End": true,
+      "Comment": "silver/ -> gold/ (star schema: 3 dimensoes + 3 fatos). Agregado por jogador nao e materializado aqui: vive em vw_player_360 (athena_gold.sql)."
+    }
+  }
+}
