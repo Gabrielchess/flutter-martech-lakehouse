@@ -7,18 +7,6 @@ Pipeline que responde: **quais jogadores dormentes vale a pena reativar, com qua
 - **Atividade:** Depósito confirmado **ou** aposta
 - **Dormente:** > 30 dias sem atividade (Taxa de retorno cai abaixo de 50%)
 - **Nunca ativou:** Sem depósito e sem aposta
-
-## A resposta
-
-Dos 250 jogadores, **119 são alvos dormentes acionáveis**: dormentes, com valor, liberados pelo compliance.
-
-**Dentre os 119, mire os 30 jogadores das faixas Q4 e Q3 parados entre 31 e 84 dias, com `bonus50`**, a oferta de maior LTV médio e maior alcance. 
-
-Três achados que mudaram a leitura:
-
-- **O canal `unknown` é o mais valioso**: R$ 6.991 de LTV médio, 51% acima do segundo.
-- **Produto não segmenta**: 206 dos 213 apostadores jogam nos dois.
-- **Acima de 84 dias** nenhum jogador da base jamais voltou: ali é reaquisição, não reativação.
   
 ## Como rodar
 
@@ -100,6 +88,19 @@ Star schema Kimball: `dim_date`, `dim_player`, `dim_campaign` + `fact_deposit`, 
 | `touchpoints` | 2 eventos posteriores à data de referência | quarentena |
 
 Nada sai em silêncio: toda linha removida vai para `quarantine/` com o motivo, e um check garante `linhas_bronze == silver + quarentena`.
+
+
+## A resposta
+
+Dos 250 jogadores, **119 são alvos dormentes acionáveis**: dormentes, com valor, liberados pelo compliance.
+
+**Dentre os 119, mire os 30 jogadores das faixas Q4 e Q3 parados entre 31 e 84 dias, com `bonus50`**, a oferta de maior LTV médio e maior alcance. 
+
+Três achados que mudaram a leitura:
+
+- **O canal `unknown` é o mais valioso**: R$ 6.991 de LTV médio, 51% acima do segundo.
+- **Produto não segmenta**: 206 dos 213 apostadores jogam nos dois.
+- **Acima de 84 dias** nenhum jogador da base jamais voltou: ali é reaquisição, não reativação.
 
 ## Estrutura
 
