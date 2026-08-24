@@ -4,6 +4,10 @@ Pipeline que responde: **quais jogadores dormentes vale a pena reativar, com qua
 
 ## Definições adotadas
 
+- **Atividade:** Depósito confirmado **ou** aposta
+- **Dormente:** > 30 dias sem atividade (Taxa de retorno cai abaixo de 50%)
+- **Nunca ativou:** Sem depósito e sem aposta
+
 | Conceito | Definição | Por quê |
 |---|---|---|
 | **Atividade** | depósito confirmado **ou** aposta | Jogador segue engajado |
