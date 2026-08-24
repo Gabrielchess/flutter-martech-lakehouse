@@ -79,8 +79,6 @@ Star schema Kimball: `dim_date`, `dim_player`, `dim_campaign` + `fact_deposit`, 
 | `fact_bet` | transacional | uma aposta | `stake_brl`, `payout_brl`, `net_brl` |
 | `fact_touchpoint` | sem medida (*factless*) | um evento de contato | contagem: `is_sent`, `is_open`, `is_click` |
 
-Camada Semântica:
-
 | View | Responde |
 |---|---|
 | `vw_player_360` | um jogador por linha: LTV, dormência, faixa de valor |
