@@ -18,8 +18,8 @@ Dos 250 jogadores, **119 são alvos dormentes acionáveis**: dormentes, com valo
 
 Três achados que mudaram a leitura:
 
-- **O canal `unknown` é o mais valioso** — R$ 6.991 de LTV médio, 51% acima do segundo.
-- **Produto não segmenta** — 206 dos 213 apostadores jogam nos dois.
+- **O canal `unknown` é o mais valioso**: R$ 6.991 de LTV médio, 51% acima do segundo.
+- **Produto não segmenta**: 206 dos 213 apostadores jogam nos dois.
 - **Acima de 84 dias** nenhum jogador da base jamais voltou: ali é reaquisição, não reativação.
   
 ## Como rodar
