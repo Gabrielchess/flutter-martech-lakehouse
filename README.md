@@ -2,25 +2,29 @@
 
 Pipeline que responde: **quais jogadores dormentes vale a pena reativar, com qual oferta, e quanto eles valem.**
 
-## O problema
+## Definições adotadas
 
-Duas coisas impediam a resposta: **Os valores estão em três moedas** e **A taxonomia de campanha está quebrada**.
+| Conceito | Definição | Por quê |
+|---|---|---|
+| **Atividade** | depósito confirmado **ou** aposta | Jogador segue engajado |
+| **Dormente** | > 30 dias sem atividade | Taxa de retorno cai abaixo de 50% |
+| **Nunca ativou** | sem depósito e sem aposta | Problema de onboarding |
 
 ## A resposta
 
-Dos 250 jogadores, **123 são alvo acionável**: dormentes, com valor, liberados pelo compliance.
+Dos 250 jogadores, **119 são alvos dormentes acionáveis**: dormentes, com valor, liberados pelo compliance.
 
-| | jogadores |
-|---|---|
-| base | 250 |
-| − nunca ativaram | −7 |
-| − ativos (≤30 dias) | −77 |
-| − dormentes sem depósito confirmado | −28 |
-| − bloqueados por compliance | −15 |
-| **alvo acionável** | **123** |
+Filtros aplicados: Apenas Dormentes (164), Self Excluded (14), KYC Status Non Verified (53), Nunca depositaram ou Apostaram (7)
 
-> **[A PREENCHER]** — segmento recomendado, oferta, valor esperado.
+**Mire os 30 jogadores das faixas Q4 e Q3 parados entre 31 e 84 dias, com `bonus50`** — a oferta de maior LTV médio e maior alcance. São R$ 199.800 depositados historicamente, 86% do valor ainda recuperável em 61% do alvo. Acima de 84 dias nenhum jogador da base jamais voltou: ali é reaquisição, não reativação.
 
+Três achados que mudaram a leitura:
+
+- **O canal `unknown` é o mais valioso** — R$ 6.991 de LTV médio, 51% acima do segundo. Descartar os 22 sem canal registrado, a limpeza óbvia, teria removido o segmento mais rentável.
+- **Produto não segmenta** — 206 dos 213 apostadores jogam nos dois, e depósito não carrega produto. "LTV por produto" não existe neste modelo.
+- **Depósitos e apostas não se conciliam** — 168 de 250 apostaram mais do que tudo que entrou. Daí LTV ser depósito confirmado: é o único fato que não depende de conciliação.
+
+  
 ## Como rodar
 
 ```bash
