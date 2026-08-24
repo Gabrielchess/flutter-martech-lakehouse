@@ -93,6 +93,7 @@ Nada sai em silêncio: toda linha removida vai para `quarantine/` com o motivo, 
 ## A resposta
 
 Dos 250 jogadores, **119 são alvos dormentes acionáveis**: dormentes, com valor, liberados pelo compliance.
+Filtros aplicados: Apenas Dormentes (164), Self Excluded (14), KYC Status Non Verified (53), Nunca depositaram ou Apostaram (7)
 
 **Dentre os 119, mire os 30 jogadores das faixas Q4 e Q3 parados entre 31 e 84 dias, com `bonus50`**, a oferta de maior LTV médio e maior alcance. 
 
