@@ -2,12 +2,6 @@
 
 Pipeline que responde: **quais jogadores dormentes vale a pena reativar, com qual oferta, e quanto eles valem.**
 
-## Definições adotadas
-
-- **Atividade:** Depósito confirmado **ou** aposta
-- **Dormente:** > 30 dias sem atividade (Taxa de retorno cai abaixo de 50%)
-- **Nunca ativou:** Sem depósito e sem aposta
-  
 ## Como rodar
 
 ```bash
@@ -90,6 +84,12 @@ Star schema Kimball: `dim_date`, `dim_player`, `dim_campaign` + `fact_deposit`, 
 Nada sai em silêncio: toda linha removida vai para `quarantine/` com o motivo, e um check garante `linhas_bronze == silver + quarentena`.
 
 
+## Definições adotadas
+
+- **Atividade:** Depósito confirmado **ou** aposta
+- **Dormente:** > 30 dias sem atividade (Taxa de retorno cai abaixo de 50%)
+- **Nunca ativou:** Sem depósito e sem aposta
+  
 ## A resposta
 
 Dos 250 jogadores, **119 são alvos dormentes acionáveis**: dormentes, com valor, liberados pelo compliance.
