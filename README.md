@@ -55,14 +55,14 @@ Tudo provisionado por Terraform (`infra/terraform/`). Serverless por escolha: o 
 
 | Recurso | Configuração |
 |---|---|
-| **S3** | bucket único, versionado, SSE-S3, acesso público bloqueado. Lifecycle expira `athena-results/` em 7 dias e versões antigas em 30 |
-| **Lambda** × 3 | Python 3.13, layer `AWSSDKPandas`, 512 MB (fx) / 1 GB (silver, gold), timeout 300 s |
-| **IAM** | uma role por Lambda, cada uma com `Deny` explícito de `PutObject` em `bronze/*` |
-| **Step Functions** | Standard, sequencial, `Retry` com backoff exponencial só em erro transitório |
-| **EventBridge Scheduler** | `cron(0 3 1 * ? *)` — mensal, dia 1 às 03:00 UTC |
-| **Glue Data Catalog** | database `flutter_martech`, alimentado por DDL explícito (sem crawler) |
-| **Athena** | workgroup dedicado, output location fixo, teto de 1 GB de scan por query |
-| **CloudWatch** | log groups com 30 dias de retenção, 3 alarmes, 1 dashboard |
+| **S3** | bucket único |
+| **Lambda** × 3 | Python 3.14 |
+| **IAM** | uma role por Lambda |
+| **Step Functions** | Standard |
+| **EventBridge Scheduler** | mensal, dia 1 às 03:00 UTC |
+| **Glue Data Catalog** | database `flutter_martech` |
+| **Athena** | workgroup dedicado |
+| **CloudWatch** | log groups |
 
 ## Modelo de dados
 
@@ -94,7 +94,7 @@ Camada Semântica:
 | Onde | O quê | Tratamento |
 |---|---|---|
 | `deposits` | 25 linhas byte-idênticas | quarentena, mantém a primeira |
-| `players` | 22 sem `acquisition_channel` (8,8%) | vira `unknown` — descartar tiraria 1/10 do LTV por canal |
+| `players` | 22 sem `acquisition_channel` (8,8%) | vira `unknown` |
 | `campaigns` | `C007` sem nome, `C008` fora do padrão | marcadas não-conformes |
 | `campaigns` | `C002`, `C012` com separador ou ordem trocada | parser casa por vocabulário |
 | `campaigns` | `C005` com erro de grafia | recuperado por fuzzy match |
