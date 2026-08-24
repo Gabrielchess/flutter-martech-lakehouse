@@ -81,7 +81,7 @@ Star schema Kimball: `dim_date`, `dim_player`, `dim_campaign` + `fact_deposit`, 
 | `fact_bet` | transacional | uma aposta | `stake_brl`, `payout_brl`, `net_brl` |
 | `fact_touchpoint` | sem medida (*factless*) | um evento de contato | contagem: `is_sent`, `is_open`, `is_click` |
 
-Views para BI:
+Camada Semântica:
 
 | View | Responde |
 |---|---|
@@ -97,12 +97,11 @@ Views para BI:
 |---|---|---|
 | `deposits` | 25 linhas byte-idênticas | quarentena, mantém a primeira |
 | `players` | 22 sem `acquisition_channel` (8,8%) | vira `unknown` — descartar tiraria 1/10 do LTV por canal |
-| `campaigns` | `C007` sem nome, `C008` fora do padrão | 0/7 segmentos, marcadas não-conformes |
-| `campaigns` | `C002`, `C012` com separador ou ordem trocada | recuperados: o parser casa por vocabulário, não por posição |
-| `campaigns` | `C005` com erro de grafia | recuperado por fuzzy match; empate vira `unknown`, nunca palpite |
+| `campaigns` | `C007` sem nome, `C008` fora do padrão | marcadas não-conformes |
+| `campaigns` | `C002`, `C012` com separador ou ordem trocada | parser casa por vocabulário |
+| `campaigns` | `C005` com erro de grafia | recuperado por fuzzy match |
 | `campaigns` | `C004` sem `product` e `audience` | 5/7 segmentos |
-| `touchpoints` | 2 eventos posteriores à data de referência | quarentena — usar toque futuro é vazamento temporal |
-| `bets` | 2.080 linhas com `payout = 0` | mantidas: aposta perdida, não dado faltante |
+| `touchpoints` | 2 eventos posteriores à data de referência | quarentena |
 
 Nada sai em silêncio: toda linha removida vai para `quarantine/` com o motivo, e um check garante `linhas_bronze == silver + quarentena`.
 
